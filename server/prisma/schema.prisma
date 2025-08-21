@@ -1,0 +1,140 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id              String           @id @default(uuid())
+  clerkId         String           @unique
+  profileImage    String?
+  username        String           @unique
+  email           String           @unique
+  phone           String?          @unique
+  password        String
+  country         String
+  city            String
+  address         String
+  postalCode      String
+  bio             String?
+  role            Role
+  status          UserStatus       @default(ACTIVE)
+  institutionName String
+  createdAt       DateTime         @default(now())
+  updatedAt       DateTime         @updatedAt
+  gigsCreated     Gig[]            @relation("GigCreator")
+  gigsAccepted    Gig[]            @relation("GigAccepter")
+  ratingsGiven    Rating[]         @relation("RatingGiver")
+  ratingsReceived Rating[]         @relation("RatingReceiver")
+  GigApplication  GigApplication[]
+  Notification Notification[]
+}
+
+model Gig {
+  id          String    @id @default(uuid())
+  title       String
+  description String
+  price       Int
+  country     String
+  city        String
+  address     String
+  postalCode  String
+  type        GigType
+  status      GigStatus @default(OPEN)
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  createdBy User   @relation("GigCreator", fields: [giverId], references: [id])
+  giverId   String
+
+  acceptedBy User?   @relation("GigAccepter", fields: [seekerId], references: [id])
+  seekerId   String?
+
+  GigApplication GigApplication[]
+}
+
+model GigApplication {
+  id        String   @id @default(uuid())
+  createdAt DateTime @default(now())
+
+  gig   Gig    @relation(fields: [gigId], references: [id])
+  gigId String
+
+  seeker   User   @relation(fields: [seekerId], references: [id])
+  seekerId String
+
+  status ApplicationStatus @default(PENDING)
+}
+
+model Rating {
+  id        String   @id @default(uuid())
+  rating    Int
+  comment   String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  giver   User   @relation("RatingGiver", fields: [giverId], references: [id])
+  giverId String
+
+  receiver   User   @relation("RatingReceiver", fields: [receiverId], references: [id])
+  receiverId String
+}
+
+model Notification {
+  id        String   @id @default(uuid())
+  userId    String   // who will receive this notification
+  title     String
+  message   String
+  type      String   // e.g., GIG_APPLIED, APP_ACCEPTED, APP_REJECTED
+  read      Boolean  @default(false)
+  createdAt DateTime @default(now())
+
+  user      User     @relation(fields: [userId], references: [id])
+}
+
+
+enum Role {
+  GIVER
+  SEEKER
+  ADMIN
+}
+
+enum UserStatus {
+  ACTIVE
+  INACTIVE
+  BANNED
+}
+
+enum GigStatus {
+  OPEN
+  ASSIGNED
+  COMPLETED
+  CANCELLED
+}
+
+enum GigType {
+  CLEANING
+  COOKING
+  GARDENING
+  OFFICE
+  TUTORING
+  DELIVERY
+  OTHER
+}
+
+enum ApplicationStatus {
+  PENDING
+  ACCEPTED
+  REJECTED
+  CANCELLED
+}
