@@ -16,7 +16,7 @@ export const Register = AsyncHandler(async (req, res) => {
     });
     if (existingUser) {
       // remove password from response
-      const { password, ...safeUser } = existingUser;
+      const { password, updatedAt, createdAt, ...safeUser } = existingUser;
       return res.json(
         new ApiResponse(200, safeUser, "User already registered")
       );

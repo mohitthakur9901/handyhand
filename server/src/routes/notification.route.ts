@@ -6,3 +6,10 @@ import {
 } from "../controllers/notification.controller";
 
 const router = express.Router();
+
+
+router.use(protectRoute);
+router.get("/notifications", getMyNotifications);
+router.put("/notifications/:notificationId", markNotificationAsRead);
+
+export default router;

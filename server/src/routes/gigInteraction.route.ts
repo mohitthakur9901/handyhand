@@ -12,4 +12,7 @@ router.use(protectRoute);
 router.get("/gigs", getGigsBySeekerLocation);
 router.post("/gigs/:gigId/apply", applyForGig);
 router.put("/applications/:applicationId/accept", acceptApplication);
+
+
+
 export default router;

@@ -56,7 +56,9 @@ Ratings (star + short review).
 
 
 
-# gigs functinalties 
-- apply for a gig
-- send notification to giver 
-- if giver accepts, send notification to accepter
+# notification system
+- initialize redis client
+- create a notification function in redis publish  required userId
+- create a notification function in redis subscribe required userId
+- publish nofitication when gig is created 
+- subscribe notification will work on ws connection 

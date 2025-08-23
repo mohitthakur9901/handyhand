@@ -3,12 +3,11 @@ import cors from "cors";
 import { clerkMiddleware } from "@clerk/express";
 import dotenv from "dotenv";
 
-
 import UseRoute from "./routes/auth.route";
 import GigRoute from "./routes/gig.route";
 import RatingRoute from "./routes/rating.route";
 import GigInteractionRoute from "./routes/gigInteraction.route";
-
+import NotificationRoute from "./routes/notification.route";
 dotenv.config({
   path: "../.env",
 });
@@ -24,15 +23,18 @@ app.use(
 );
 
 app.get("/", (req, res) => {
-  res.send("Hello World!");
+  return res.status(200).json({ message: "Hello world" });
 });
 app.get("/health", (req, res) => {
-  res.send("Healthy");
+  return res.status(200).json({ message: "Healthy" });
 });
 
-app.use("/api/user", UseRoute);
+app.use("/api/auth", UseRoute);
 app.use("/api/gig", GigRoute);
 app.use("/api/rating", RatingRoute);
-app.use("/api/gigInteraction", GigInteractionRoute);
+app.use("/api/user", GigInteractionRoute);
+app.use("/api/notification", NotificationRoute);
+
+
 
 export default app;

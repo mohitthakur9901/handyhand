@@ -26,6 +26,8 @@ model User {
   city            String
   address         String
   postalCode      String
+  latitude        Float?
+  longitude       Float?
   bio             String?
   role            Role
   status          UserStatus       @default(ACTIVE)
@@ -37,22 +39,20 @@ model User {
   ratingsGiven    Rating[]         @relation("RatingGiver")
   ratingsReceived Rating[]         @relation("RatingReceiver")
   GigApplication  GigApplication[]
-  Notification Notification[]
+  Notification    Notification[]
 }
 
 model Gig {
-  id          String    @id @default(uuid())
+  id          String @id @default(uuid())
   title       String
   description String
   price       Int
-  country     String
-  city        String
-  address     String
-  postalCode  String
-  type        GigType
-  status      GigStatus @default(OPEN)
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @updatedAt
+  latitude  Float?
+  longitude Float?
+  type      GigType
+  status    GigStatus @default(OPEN)
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
 
   createdBy User   @relation("GigCreator", fields: [giverId], references: [id])
   giverId   String
@@ -92,16 +92,14 @@ model Rating {
 
 model Notification {
   id        String   @id @default(uuid())
-  userId    String   // who will receive this notification
+  userId    String
   title     String
   message   String
-  type      String   // e.g., GIG_APPLIED, APP_ACCEPTED, APP_REJECTED
+  type      String
   read      Boolean  @default(false)
   createdAt DateTime @default(now())
-
   user      User     @relation(fields: [userId], references: [id])
 }
-
 
 enum Role {
   GIVER
