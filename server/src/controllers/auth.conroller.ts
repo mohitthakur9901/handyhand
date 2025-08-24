@@ -6,6 +6,7 @@ import prisma from "../utils/client";
 import { getAuth } from "@clerk/express";
 import { clerkClient } from "@clerk/express";
 
+// TODO: readjust the controllers 
 export const Register = AsyncHandler(async (req, res) => {
   try {
     const { userId } = getAuth(req);
