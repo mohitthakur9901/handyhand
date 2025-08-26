@@ -51,41 +51,41 @@ const Profile = () => {
 
           {/* Profile Details */}
           <View className="px-6 space-y-4 gap-y-4">
-            <Text  className="bg-white px-4 py-3 rounded-xl shadow-sm" >
-                Username
+            <Text className="bg-white px-4 py-3 rounded-xl shadow-sm" >
+              Username
             </Text>
-            <Text  className="bg-white px-4 py-3 rounded-xl shadow-sm" >
-                Email
+            <Text className="bg-white px-4 py-3 rounded-xl shadow-sm" >
+              Email
             </Text>
-            <Text  className="bg-white px-4 py-3 rounded-xl shadow-sm" >
-                Phone
+            <Text className="bg-white px-4 py-3 rounded-xl shadow-sm" >
+              Phone
             </Text>
-            <Text  className="bg-white px-4 py-3 rounded-xl shadow-sm" >
-                Institution Name
+            <Text className="bg-white px-4 py-3 rounded-xl shadow-sm" >
+              Institution Name
             </Text>
 
             <View className="flex-row space-x-4 gap-x-2">
               <Text className="flex-1 bg-white px-4 py-3 rounded-xl shadow-sm" >
                 Country
               </Text>
-              <Text  className="flex-1 bg-white px-4 py-3 rounded-xl shadow-sm" >
+              <Text className="flex-1 bg-white px-4 py-3 rounded-xl shadow-sm" >
                 City
               </Text>
             </View>
 
             <View className="flex-row space-x-4 gap-x-2">
-              <Text  className="flex-1 bg-white px-4 py-3 rounded-xl shadow-sm" >
+              <Text className="flex-1 bg-white px-4 py-3 rounded-xl shadow-sm" >
                 Address
               </Text>
-              <Text   className="flex-1 bg-white px-4 py-3 rounded-xl shadow-sm" >
+              <Text className="flex-1 bg-white px-4 py-3 rounded-xl shadow-sm" >
                 Pin Code
               </Text>
             </View>
 
             <Text
-            
+
               className="bg-white px-4 py-3 rounded-xl shadow-sm"
-             
+
               numberOfLines={4}
             >
               Bio Description
@@ -143,46 +143,64 @@ const Profile = () => {
                 <View className="space-y-4 gap-y-4">
                   <TextInput
                     placeholder="Username"
-                    className="bg-gray-100 px-4 py-3 rounded-xl shadow-sm"
+                    placeholderTextColor="black"
+
+                    className="bg-gray-100 text-black px-4 py-3 rounded-xl shadow-sm"
                   />
                   <TextInput
                     placeholder="Email"
-                    className="bg-gray-100 px-4 py-3 rounded-xl shadow-sm"
+                    placeholderTextColor="black"
+
+                    className="bg-gray-100 text-black px-4 py-3 rounded-xl shadow-sm"
                   />
                   <TextInput
                     placeholder="Phone"
-                    className="bg-gray-100 px-4 py-3 rounded-xl shadow-sm"
+                    placeholderTextColor="black"
+
+                    className="bg-gray-100 text-black px-4 py-3 rounded-xl shadow-sm"
                   />
                   <TextInput
                     placeholder="Institution"
-                    className="bg-gray-100 px-4 py-3 rounded-xl shadow-sm"
+                    placeholderTextColor="black"
+
+                    className="bg-gray-100  text-black px-4 py-3 rounded-xl shadow-sm"
                   />
 
                   <View className="flex-row space-x-4 gap-x-2">
                     <TextInput
                       placeholder="Country"
-                      className="flex-1 bg-gray-100 px-4 py-3 rounded-xl shadow-sm"
+                      placeholderTextColor="black"
+
+                      className="flex-1 bg-gray-100 text-black px-4 py-3 rounded-xl shadow-sm"
                     />
                     <TextInput
                       placeholder="City"
-                      className="flex-1 bg-gray-100 px-4 py-3 rounded-xl shadow-sm"
+                      placeholderTextColor="black"
+
+                      className="flex-1 bg-gray-100  text-black px-4 py-3 rounded-xl shadow-sm"
                     />
                   </View>
 
                   <View className="flex-row space-x-4 gap-x-2">
                     <TextInput
                       placeholder="Address"
-                      className="flex-1 bg-gray-100 px-4 py-3 rounded-xl shadow-sm"
+                      placeholderTextColor="black"
+
+                      className="flex-1 bg-gray-100 text-black px-4 py-3 rounded-xl shadow-sm"
                     />
                     <TextInput
                       placeholder="Postal Code"
                       keyboardType="number-pad"
-                      className="flex-1 bg-gray-100 px-4 py-3 rounded-xl shadow-sm"
+                      placeholderTextColor="black"
+
+                      className="flex-1 bg-gray-100 text-black  px-4 py-3 rounded-xl shadow-sm"
                     />
                   </View>
 
                   <TextInput
                     placeholder="Bio"
+                    placeholderTextColor="black"
+
                     className="bg-gray-100 px-4 py-3 rounded-xl shadow-sm"
                     multiline
                     numberOfLines={4}

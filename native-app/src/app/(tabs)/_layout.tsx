@@ -5,7 +5,7 @@ import { Platform } from "react-native";
 import { HapticTab } from "@/src/components/HapticTab";
 import TabBarBackground from "@/src/components/ui/TabBarBackground";
 import AntDesign from "@expo/vector-icons/AntDesign";
-
+import FontAwesome5 from '@expo/vector-icons/FontAwesome5';
 /*
 render tabs based on user role 
 giver will have on gigs creating page 
@@ -47,7 +47,17 @@ export default function TabLayout() {
           ),
         }}
       />
-    
+      {/* show only for giver */}
+      <Tabs.Screen
+        name="gig"
+        options={{
+          title: "Gig",
+          tabBarIcon: ({ color }) => (
+
+            <FontAwesome5 name="hands-helping" size={24} color={color} />
+          ),
+        }}
+      />
       <Tabs.Screen
         name="notification"
         options={{

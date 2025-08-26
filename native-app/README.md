@@ -5,7 +5,7 @@ pages:
     home
     profile
     settings - radius, theme
-    notifications
+    notifications   
     gigs page
     gigs details
     gigs create

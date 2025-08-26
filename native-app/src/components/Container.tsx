@@ -5,6 +5,8 @@ import {
   ScrollView,
   KeyboardAvoidingView,
   ViewStyle,
+  TouchableWithoutFeedback,
+  Keyboard,
 } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 
@@ -19,23 +21,25 @@ const Container = ({ children, style }: ContainerProps) => {
       <KeyboardAvoidingView
         className="flex-1"
         behavior={Platform.OS === "ios" ? "padding" : "height"}
+        keyboardVerticalOffset={80} // ✅ adjust for header/navbar height
       >
-        <ScrollView
-          contentContainerStyle={{
-            flexGrow: 1,
-            justifyContent: "center",
-            padding: 16,
-            ...style,
-          }}
-          keyboardShouldPersistTaps="handled"
-        >
-          <LinearGradient
-            colors={["#FFD700", "#FFB347"]}
-            style={{ borderRadius: 16, flex: 1, padding: 16 }}
+        <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+          <ScrollView
+            contentContainerStyle={{
+              flexGrow: 1,
+              padding: 16,
+              ...style,
+            }}
+            keyboardShouldPersistTaps="handled"
           >
-            {children}
-          </LinearGradient>
-        </ScrollView>
+            <LinearGradient
+              colors={["#FFD700", "#FFB347"]}
+              style={{ borderRadius: 16, flex: 1, padding: 16 }}
+            >
+              {children}
+            </LinearGradient>
+          </ScrollView>
+        </TouchableWithoutFeedback>
       </KeyboardAvoidingView>
     </SafeAreaView>
   );
