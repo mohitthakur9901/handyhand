@@ -30,5 +30,5 @@ jobs:
           script: |
             cd /home/ubuntu/api
             docker login -u ${{ secrets.DOCKER_HUB_USERNAME }} -p ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
-            docker compose pull mohitthakur9901/api:latest
+            docker compose pull 
             docker compose up -d --build
