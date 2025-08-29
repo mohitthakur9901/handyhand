@@ -21,7 +21,6 @@ model User {
   username        String           @unique
   email           String           @unique
   phone           String?          @unique
-  password        String
   country         String
   city            String
   address         String
@@ -31,7 +30,7 @@ model User {
   bio             String?
   role            Role
   status          UserStatus       @default(ACTIVE)
-  institutionName String
+  institutionName String?
   createdAt       DateTime         @default(now())
   updatedAt       DateTime         @updatedAt
   gigsCreated     Gig[]            @relation("GigCreator")

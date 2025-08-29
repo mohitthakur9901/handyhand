@@ -41,7 +41,6 @@ pay the person who accepted the gig
 - postgresql
 - express
 
-
 Student registration (email/phone + verify with student ID / edu email).
 
 Post a gig (basic info: title, type, price, location).
@@ -52,13 +51,12 @@ Cash payment in person (no wallet yet, keep it simple).
 
 Ratings (star + short review).
 
+# production version
 
+- server
+- test cases
+- monitoring {grafan and prometheus}
+- ci cd pipeline
+- deployment
+- frontend app
 
-
-
-# notification system
-- initialize redis client
-- create a notification function in redis publish  required userId
-- create a notification function in redis subscribe required userId
-- publish nofitication when gig is created 
-- subscribe notification will work on ws connection 

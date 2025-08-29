@@ -31,7 +31,7 @@ function haversine({
   return EARTH_RADIUS_KM * c;
 }
 
-// get gigs based on seekd location range
+// get gigs based on seeker location range
 export const getGigsBySeekerLocation = AsyncHandler(async (req, res) => {
   try {
     const { userId } = getAuth(req);

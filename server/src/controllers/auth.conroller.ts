@@ -6,10 +6,12 @@ import prisma from "../utils/client";
 import { getAuth } from "@clerk/express";
 import { clerkClient } from "@clerk/express";
 
-// TODO: readjust the controllers 
+
 export const Register = AsyncHandler(async (req, res) => {
   try {
     const { userId } = getAuth(req);
+    console.log(userId);
+    
     const existingUser = await prisma.user.findUnique({
       where: {
         clerkId: userId,
@@ -23,6 +25,8 @@ export const Register = AsyncHandler(async (req, res) => {
       );
     }
     const clerkUser = await clerkClient.users.getUser(userId);
+    console.log(clerkUser);
+    
     const newUser = await prisma.user.create({
       data: {
         clerkId: userId,

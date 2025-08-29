@@ -4,6 +4,9 @@ import * as ImagePicker from "expo-image-picker";
 import AntDesign from "@expo/vector-icons/AntDesign";
 import * as Location from "expo-location";
 import Container from "@/src/components/Container";
+import { useSyncUser } from "@/src/hooks/useSyncUser";
+import { useAuth } from "@clerk/clerk-expo";
+import { SignOutButton } from "@/src/components/SignOutButton";
 
 const Profile = () => {
   const [location, setLocation] = useState<Location.LocationObject | null>(null);
@@ -11,6 +14,7 @@ const Profile = () => {
   const [image, setImage] = useState<string | null>(null);
   const [editModalVisible, setEditModalVisible] = useState(false);
   const [settingModalVisible, setSettingModalVisible] = useState(false);
+  const {signOut} = useAuth();
 
   const pickImage = async () => {
     let result = await ImagePicker.launchImageLibraryAsync({
@@ -36,6 +40,10 @@ const Profile = () => {
     getCurrentLocation();
   }, []);
 
+  const handleLogout = () => {
+      signOut();
+  }
+  useSyncUser();
   return (
     <Container>
       <ScrollView contentContainerStyle={{ paddingTop: 40, paddingBottom: 40 }}>
@@ -238,6 +246,7 @@ const Profile = () => {
               <View className="bg-white p-6 rounded-2xl w-4/5 items-center">
                 <Text className="text-lg font-bold mb-4">Settings</Text>
                 {/* Buttons for app Adjustment */}
+               <SignOutButton/>
                 <TouchableOpacity onPress={() => setSettingModalVisible(false)}>
                   <Text className="text-orange-500 font-bold mt-4">Close</Text>
                 </TouchableOpacity>

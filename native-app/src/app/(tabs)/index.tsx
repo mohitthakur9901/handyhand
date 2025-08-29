@@ -1,44 +1,18 @@
+// HomeScreen.tsx
 import Container from '@/src/components/Container';
 import { Modal, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import Slider from '@react-native-community/slider';
 import AntDesign from '@expo/vector-icons/AntDesign';
 import { useState } from 'react';
 import GigList from '@/src/components/GigList';
-import * as Location from "expo-location";
 
 export default function HomeScreen() {
   const [search, setSearch] = useState('');
   const [filter, setFilter] = useState(false);
-  const [location, setLocation] = useState(12);
+  const [location, setLocation] = useState(16);
 
   return (
     <Container>
-      {/* Search bar and filter button */}
-      <View className="flex-row items-center justify-between mb-4 mt-6 border-b-2  rounded-lg px-2">
-        <TextInput
-          placeholder="Search"
-          value={search}
-          placeholderTextColor="black"
-
-          onChangeText={setSearch}
-          className="bg-white m-2 rounded-xl flex-1 px-3"
-        />
-        <TouchableOpacity
-          onPress={() => setFilter(true)}
-          className="p-2 bg-white rounded-lg shadow-md"
-          style={{
-            shadowColor: "#000",
-            shadowOffset: { width: 0, height: 2 },
-            shadowOpacity: 0.15,
-            shadowRadius: 4,
-            elevation: 4, // ✅ for Android
-          }}
-        >
-          <AntDesign name="filter" size={24} color="black" />
-        </TouchableOpacity>
-
-      </View>
-
       {/* Modal with slider */}
       <Modal visible={filter} animationType="fade" transparent={true}>
         <View className="flex-1 justify-center items-center bg-black/50">
@@ -66,8 +40,8 @@ export default function HomeScreen() {
         </View>
       </Modal>
 
-      {/* List down the gigs and helper based on user role nad location */}
-      <GigList range={location} />
+      {/* Pass search + filter props to GigList */}
+      <GigList range={location} search={search} setSearch={setSearch} setFilter={setFilter} />
     </Container>
   );
 }

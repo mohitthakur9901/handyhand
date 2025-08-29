@@ -1,6 +1,9 @@
+version: "3.9"
+
 services:
   api:
     build: .
+    container_name: api
     ports:
       - "3000:3000"
     environment:
@@ -12,10 +15,12 @@ services:
       - db
       - redis
     networks:
-      - default
-      
+      - app-network
+      - monitoring-network  
+
   db:
     image: postgres:15
+    container_name: db
     restart: always
     environment:
       POSTGRES_USER: postgres
@@ -26,22 +31,54 @@ services:
     volumes:
       - pgdata:/var/lib/postgresql/data
     networks:
-      - default
+      - app-network
 
   redis:
     image: redis:7
+    container_name: redis
     restart: always
     ports:
       - "6379:6379"
     depends_on:
       - db
     networks:
-      - default
+      - app-network
 
-    
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: prometheus
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./prometheus/prometheus.yml:/prometheus/prometheus.yml
+      - prometheus_data:/prometheus
+    command:
+      - "--config.file=/etc/prometheus/prometheus.yml"
+      - "--storage.tsdb.path=/prometheus"
+    networks:
+      - monitoring-network
+
+  grafana:
+    image: grafana/grafana:latest
+    container_name: grafana
+    ports:
+      - "3001:3000"
+    volumes:
+      - ./grafana/provisioning:/grafana/provisioning
+      - grafana_data:/var/lib/grafana
+    environment:
+      - GF_SECURITY_ADMIN_USER=admin
+      - GF_SECURITY_ADMIN_PASSWORD=admin
+    networks:
+      - monitoring-network
+
 volumes:
   pgdata:
+  prometheus_data:
+  grafana_data:
 
 networks:
-  default:
+  app-network:
+    driver: bridge
+  monitoring-network:
     driver: bridge
