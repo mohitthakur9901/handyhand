@@ -22,13 +22,13 @@ jobs:
           docker push mohitthakur9901/api:latest
 
       - name: Deploy on EC2
-        uses: appleboy/ssh-action@v0.1.6
+        uses: appleboy/ssh-action@master
         with:
           host: ${{ secrets.EC2_HOST }}
           username: ubuntu
           key: ${{ secrets.EC2_SSH_KEY }}
           script: |
-            cd /home/ubuntu/api 
-            git pull origin main || true
-            docker compose pull
-            docker compose up -d --remove-orphans
+            cd /home/ubuntu/api
+            docker login -u ${{ secrets.DOCKER_HUB_USERNAME }} -p ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
+            docker compose pull mohitthakur9901/api:latest
+            docker compose up -d --build
