@@ -2,7 +2,7 @@ version: "3.9"
 
 services:
   api:
-    build: .
+    image: mohitthakur9901/api:latest
     container_name: api
     ports:
       - "80:3000"
