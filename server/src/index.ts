@@ -1,14 +1,18 @@
 import http from "http";
 import app from "./app";
 import { initWebSocketServer } from "./sockets/handler";
+import { infoLogger, errorLogger } from "./utils/Logger"; 
 
-
+const PORT = process.env.PORT || 3000;
 
 const httpServer = http.createServer(app);
+
 initWebSocketServer(httpServer);
 
+httpServer.listen(PORT, () => {
+  infoLogger.info(`🚀 Server is running on port ${PORT}`);
+});
 
-
-httpServer.listen(3000, () => {
-  console.log("Server is running on port 3000");
+httpServer.on("error", (error: any) => {
+  errorLogger.error(`❌ Server error: ${error.message}`);
 });

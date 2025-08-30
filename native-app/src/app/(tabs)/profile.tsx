@@ -14,7 +14,6 @@ const Profile = () => {
   const [image, setImage] = useState<string | null>(null);
   const [editModalVisible, setEditModalVisible] = useState(false);
   const [settingModalVisible, setSettingModalVisible] = useState(false);
-  const {signOut} = useAuth();
 
   const pickImage = async () => {
     let result = await ImagePicker.launchImageLibraryAsync({
@@ -40,10 +39,8 @@ const Profile = () => {
     getCurrentLocation();
   }, []);
 
-  const handleLogout = () => {
-      signOut();
-  }
   useSyncUser();
+
   return (
     <Container>
       <ScrollView contentContainerStyle={{ paddingTop: 40, paddingBottom: 40 }}>

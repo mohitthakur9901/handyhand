@@ -5,6 +5,7 @@ import AsyncHandler from "../utils/Asynchandler";
 import prisma from "../utils/client";
 import { createNotification } from "../services/notification";
 import { publishNotification } from "../utils/publishNotification";
+import { infoLogger, errorLogger } from "../utils/Logger";
 
 const EARTH_RADIUS_KM = 6371;
 
@@ -31,29 +32,25 @@ function haversine({
   return EARTH_RADIUS_KM * c;
 }
 
-// get gigs based on seeker location range
+// -------------------- GET GIGS BY SEEKER LOCATION --------------------
 export const getGigsBySeekerLocation = AsyncHandler(async (req, res) => {
   try {
     const { userId } = getAuth(req);
     const { radius } = req.query;
     const radiusKm = Number(radius ?? 12);
-  
+
+    infoLogger.info("Fetching gigs by seeker location", { userId, radiusKm });
+
     const seekerLocation = await prisma.user.findUnique({
-      where: {
-        clerkId: userId,
-      },
+      where: { clerkId: userId },
     });
     if (!seekerLocation) {
+      errorLogger.error("Seeker location not found", { userId });
       throw new ApiError(404, "Seeker location not found");
     }
 
-    //  fetch gigs based on seeker's live
-    const gigs = await prisma.gig.findMany({
-      where: {
-        status: "OPEN",
-      },
-    });
-    
+    const gigs = await prisma.gig.findMany({ where: { status: "OPEN" } });
+
     const gigsInRange = gigs.filter((gig) => {
       const distance = haversine({
         lat1: seekerLocation.latitude!,
@@ -64,50 +61,46 @@ export const getGigsBySeekerLocation = AsyncHandler(async (req, res) => {
       return distance <= radiusKm;
     });
 
+    infoLogger.info("Fetched gigs by seeker location", {
+      userId,
+      count: gigsInRange.length,
+    });
+
     return res.json(
       new ApiResponse(200, gigsInRange, "Gigs fetched based on your location")
     );
   } catch (error) {
-    console.error("getGigsByLocation error:", error);
-    throw new ApiError(
-      500,
-      "Something went wrong while fetching gigs by location"
-    );
+    errorLogger.error("Error fetching gigs by location", { error });
+    throw new ApiError(500, "Something went wrong while fetching gigs by location");
   }
 });
 
-// Seeker can apply for a gig
+// -------------------- APPLY FOR A GIG --------------------
 export const applyForGig = AsyncHandler(async (req, res) => {
   try {
     const { userId } = getAuth(req);
     const { gigId } = req.params;
-    const gig = await prisma.gig.findUnique({
-      where: {
-        id: gigId,
-      },
-    });
+
+    infoLogger.info("Applying for gig", { userId, gigId });
+
+    const gig = await prisma.gig.findUnique({ where: { id: gigId } });
     if (!gig) {
+      errorLogger.error("Gig not found", { gigId });
       throw new ApiError(404, "Gig not found");
     }
     if (gig.status !== "OPEN") throw new ApiError(400, "Gig is not open");
 
     const existingApplication = await prisma.gigApplication.findFirst({
-      where: {
-        gigId: gigId,
-        seekerId: userId,
-      },
+      where: { gigId, seekerId: userId },
     });
     if (existingApplication) {
+      errorLogger.error("Duplicate application attempt", { userId, gigId });
       throw new ApiError(400, "You have already applied for this gig");
     }
-    const newApplication = await prisma.gigApplication.create({
-      data: {
-        gigId: gigId,
-        seekerId: userId,
-      },
-    });
 
-    // TODO: send notification to gig owner
+    const newApplication = await prisma.gigApplication.create({
+      data: { gigId, seekerId: userId },
+    });
 
     await createNotification({
       message: `You have a new application for ${gig.title}`,
@@ -122,40 +115,55 @@ export const applyForGig = AsyncHandler(async (req, res) => {
       type: "New Application",
     });
 
+    infoLogger.info("Applied to gig successfully", {
+      gigId,
+      seekerId: userId,
+      applicationId: newApplication.id,
+    });
+
     return res.json(
       new ApiResponse(201, newApplication, "Applied to gig successfully")
     );
   } catch (error) {
+    errorLogger.error("Error applying for gig", { error, gigId: req.params.gigId });
     throw new ApiError(500, "Something went wrong while applying for gig");
   }
 });
 
-// giver can accept or reject an application
+// -------------------- ACCEPT APPLICATION --------------------
 export const acceptApplication = AsyncHandler(async (req, res) => {
   try {
     const { userId } = getAuth(req);
     const { applicationId } = req.params;
+
+    infoLogger.info("Accepting application", { userId, applicationId });
 
     const application = await prisma.gigApplication.findUnique({
       where: { id: applicationId },
       include: { gig: true },
     });
 
-    if (!application) throw new ApiError(404, "Application not found");
-    if (application.gig.giverId !== userId)
+    if (!application) {
+      errorLogger.error("Application not found", { applicationId });
+      throw new ApiError(404, "Application not found");
+    }
+    if (application.gig.giverId !== userId) {
+      errorLogger.error("Unauthorized accept attempt", {
+        userId,
+        gigId: application.gigId,
+      });
       throw new ApiError(403, "Not authorized to accept this application");
+    }
 
-    // Mark this application as accepted
     const updatedApp = await prisma.gigApplication.update({
       where: { id: applicationId },
       data: { status: "ACCEPTED" },
     });
 
-    // Reject all others and notify them
+    // Reject others
     const rejectedApps = await prisma.gigApplication.findMany({
       where: { gigId: application.gigId, id: { not: applicationId } },
     });
-
     if (rejectedApps.length > 0) {
       await prisma.gigApplication.updateMany({
         where: { gigId: application.gigId, id: { not: applicationId } },
@@ -182,12 +190,9 @@ export const acceptApplication = AsyncHandler(async (req, res) => {
     // Update gig
     await prisma.gig.update({
       where: { id: application.gigId },
-      data: {
-        seekerId: application.seekerId,
-        status: "ASSIGNED",
-      },
+      data: { seekerId: application.seekerId, status: "ASSIGNED" },
     });
-    // TODO: send notification to seeker
+
     publishNotification({
       message: "Your application has been accepted by the gig giver.",
       userId: application.seekerId,
@@ -201,9 +206,18 @@ export const acceptApplication = AsyncHandler(async (req, res) => {
       type: "APP_ACCEPTED",
     });
 
+    infoLogger.info("Application accepted successfully", {
+      applicationId,
+      gigId: application.gigId,
+      seekerId: application.seekerId,
+    });
+
     return res.json(new ApiResponse(200, updatedApp, "Application accepted"));
   } catch (error) {
-    console.error("acceptApplication error:", error);
+    errorLogger.error("Error accepting application", {
+      error,
+      applicationId: req.params.applicationId,
+    });
     throw new ApiError(500, "Something went wrong while accepting application");
   }
 });
